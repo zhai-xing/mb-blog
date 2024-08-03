@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#FFF"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><link rel="icon" type="image/ico" sizes="32x32" href="/images/favicon.ico"><link rel="mask-icon" href="/images/logo.svg" color=""><link rel="manifest" href="/images/manifest.json"><meta name="msapplication-config" content="/images/browserconfig.xml"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="alternate" type="application/rss+xml" title="星辰驿站" href="http://dj_zhaixing.gitee.io/rss.xml"><link rel="alternate" type="application/atom+xml" title="星辰驿站" href="http://dj_zhaixing.gitee.io/atom.xml"><link rel="alternate" type="application/json" title="星辰驿站" href="http://dj_zhaixing.gitee.io/feed.json"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Mulish:300,300italic,400,400italic,700,700italic%7CFredericka%20the%20Great:300,300italic,400,400italic,700,700italic%7CNoto%20Serif%20JP:300,300italic,400,400italic,700,700italic%7CNoto%20Serif%20SC:300,300italic,400,400italic,700,700italic%7CInconsolata:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="/css/app.css?v=0.2.5"><meta name="keywords" content="JUC,多线程"><link rel="canonical" href="http://dj_zhaixing.gitee.io/JUC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><title>JUC学习笔记 - 异步设计模式 - java | Pick stars = 星辰驿站 = =别怕路长梦远，总有星河照耀=</title><meta name="generator" content="Hexo 6.3.0"></head><body itemscope itemtype="http://schema.org/WebPage"><div id="loading"><div class="cat"><div class="body"></div><div class="head"><div class="face"></div></div><div class="foot"><div class="tummy-end"></div><div class="bottom"></div><div class="legs left"></div><div class="legs right"></div></div><div class="paw"><div class="hands left"></div><div class="hands right"></div></div></div></div><div id="container"><header id="header" itemscope itemtype="http://schema.org/WPHeader"><div class="inner"><div id="brand"><div class="pjax"><h1 itemprop="name headline">JUC学习笔记</h1><div class="meta"><span class="item" title="创建时间：2023-03-08 00:12:31"><span class="icon"><i class="ic i-calendar"></i> </span><span class="text">发表于</span> <time itemprop="dateCreated datePublished" datetime="2023-03-08T00:12:31+08:00">2023-03-08</time> </span><span class="item" title="本文字数"><span class="icon"><i class="ic i-pen"></i> </span><span class="text">本文字数</span> <span>9.1k</span> <span class="text">字</span> </span><span class="item" title="阅读时长"><span class="icon"><i class="ic i-clock"></i> </span><span class="text">阅读时长</span> <span>8 分钟</span></span></div></div></div><nav id="nav"><div class="inner"><div class="toggle"><div class="lines" aria-label="切换导航栏"><span class="line"></span> <span class="line"></span> <span class="line"></span></div></div><ul class="menu"><li class="item title"><a href="/" rel="start">Pick stars</a></li></ul><ul class="right"><li class="item theme"><i class="ic i-sun"></i></li><li class="item search"><i class="ic i-search"></i></li></ul></div></nav></div><div id="imgs" class="pjax"><img src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/5af17f7f881b11ebb6edd017c2d2eca2.jpg"></div></header><div id="waves"><svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/></defs><g class="parallax"><use xlink:href="#gentle-wave" x="48" y="0"/><use xlink:href="#gentle-wave" x="48" y="3"/><use xlink:href="#gentle-wave" x="48" y="5"/><use xlink:href="#gentle-wave" x="48" y="7"/></g></svg></div><main><div class="inner"><div id="main" class="pjax"><div class="article wrap"><div class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList"><i class="ic i-home"></i> <span><a href="/">首页</a></span><i class="ic i-angle-right"></i> <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/categories/java/" itemprop="item" rel="index" title="分类于 java"><span itemprop="name">java</span></a><meta itemprop="position" content="1"></span><i class="ic i-angle-right"></i> <span class="current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/categories/%E5%BC%82%E6%AD%A5%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="item" rel="index" title="分类于 异步设计模式"><span itemprop="name">异步设计模式</span></a><meta itemprop="position" content="2"></span></div><article itemscope itemtype="http://schema.org/Article" class="post block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://dj_zhaixing.gitee.io/JUC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="摘星"><meta itemprop="description" content="=别怕路长梦远，总有星河照耀=, 欢迎来到摘星的小破站，这里你可以阅读我的学习笔记并提出独到的见解~我们将互相学习交流知识，共同进步"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="星辰驿站"></span><div class="body md" itemprop="articleBody"><h3 id="11-进程与线程"><a class="anchor" href="#11-进程与线程">#</a> 1.1 进程与线程</h3><ul><li><p>进程基本上是相互独立的，而线程存在于进程内，一个进程内可存在多个线程，同一个进程内多个线程可以访问一个共享的内存空间，线程间的通信很简单，因为他们共享进程内的内存。线程更轻量，线程的上下文切换成本一般要比进程的上下文切换低</p></li><li><p>Java 中，线程作为最小的调度单位，进程作为资源分配的最小单位，在 windows 中，进程是线程的容器。</p></li><li><p>进程间的通信较为复杂，同一台计算机的进程通信称为 IPC，而不同计算机之间的进程通信，则需要通过网络来实现。</p></li><li><p>当一个程序被运行，从磁盘加载这个程序的代码到内存，这时就开启了一个进程。</p></li><li><p>进程可看作程序的一个实例，大部分程序可同时运行多个实例进程，当然也有部分程序只能同时启动一个实例进程。</p></li></ul><h3 id="22-并行与并发"><a class="anchor" href="#22-并行与并发">#</a> 2.2 并行与并发</h3><p>在单核 cpu 下，线程实际还是按串行指向的，操作系统中有一个组件叫任务调度器，将 CPU 的时间片分配给不同的程序使用，只是由于 CPU 在线程间的切换非常快，人类感觉是同时运行的。将这种多个线程轮流使用 CPU 的做法称为并发。</p><p>而在多核 CPU 下，每个核都可以调度运行线程，这种情况下，线程是可以并行的。</p><p>并发：是同一时间<strong>应对</strong>多件事情的能力<br>并行：是同一时间<strong>动手做</strong>多件事情的能力</p><h3 id="31java创建和运行线程"><a class="anchor" href="#31java创建和运行线程">#</a> 3.1Java 创建和运行线程</h3><p>方法一：直接使用 Thread</p><pre><code>**package com.zx.itcast.test;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j(topic = &quot;test2&quot;)
+public class Test2 &#123;
+    public static void main(String[] args) &#123;
+       Thread thread=new Thread()&#123;
+           @Override
+           public void run()&#123;
+               System.out.println(&quot;线程的任务&quot;);
+           &#125;
+       &#125;;
+       //运行线程
+       thread.start();
+
+    &#125;
+&#125;
+**
+</code></pre><p>方法二：使用 Runnable 配合 Thread<br>使用 Runnable 可把线程和任务分开，</p><p>Thread 代表线程<br>Runnable 代表要运行的任务<br>使用了 Runnable 可更容易与线程池等高级 API 配合<br>用 Runnable 让任务类脱离了 Thread 继承体系，</p><pre><code>package com.zx.itcast.test;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j(topic = &quot;test2&quot;)
+public class Test2 &#123;
+    public static void main(String[] args) &#123;
+        //创建要执行的任务
+       Runnable runnable=new Runnable() &#123;
+           @Override
+           public void run() &#123;
+               System.out.println(&quot;执行的任务&quot;);
+           &#125;
+       &#125;;
+       
+       //创建Thread 将runnable作为参数传进去
+        Thread thread=new Thread(runnable);
+        
+       //启动线程
+       thread.start();
+
+    &#125;
+&#125;
+
+</code></pre><p>方法三：FutureTask 配合 Thread<br>FutureTask 能够接收 Callable 类型的参数，用来处理有返回结果的情况。<br>使用 FutureTask 可以处理线程运行完有结果的情况</p><pre><code>package com.zx.itcast.test;
+
+import lombok.extern.slf4j.Slf4j;
+
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+@Slf4j(topic = &quot;test2&quot;)
+public class Test2 &#123;
+    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        
+        FutureTask&lt;String&gt; futureTask=new FutureTask&lt;String&gt;(()-&gt;&#123;
+            System.out.println(&quot;执行的&quot;);
+            return &quot;任务&quot;;
+        &#125;);
+
+        new Thread(futureTask).start();
+        System.out.println(futureTask.get());
+
+    &#125;
+&#125;
+
+</code></pre><h3 id="32栈与栈帧"><a class="anchor" href="#32栈与栈帧">#</a> 3.2 栈与栈帧</h3><p>JVM 由栈、堆、方法区组成，其中栈内存是给线程使用的，每个线程启动后，虚拟机就会为其分配一个栈内存</p><ul><li>每个栈由多个栈帧组成，对应着每次方法调用时占用的内存</li><li>每个线程只能有一个活动栈帧对应着正在执行的那个方法<br><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308000938666.png" alt="image-20230308000938666"></li></ul><h3 id="33上下文切换"><a class="anchor" href="#33上下文切换">#</a> 3.3 上下文切换</h3><p>因为以下原因导致 cpu 不再执行当前的线程，转而执行另一个线程的代码</p><ul><li>线程的 CPU 时间用完</li><li>垃圾回收有更高优先级的线程需要运行</li><li>线程自己调用了 sleep、yield、wait、park、lock 等方法<br>当然了频繁的上下文切换，会影响性能。</li></ul><h3 id="34常用的方法"><a class="anchor" href="#34常用的方法">#</a> 3.4 常用的方法</h3><p><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308001025831.png" alt="image-20230308001025831"></p><p><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308001047901.png" alt="image-20230308001047901"></p><p><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308001057342.png" alt="image-20230308001057342"></p><h4 id="341-start与run"><a class="anchor" href="#341-start与run">#</a> 3.4.1 start 与 run</h4><ul><li>直接调用 run 是在主线程中执行了 run，没有启动新的线程，还是同步执行的。</li><li>使用 start 是启动新的线程，通过新的线程间接执行 run 中的代码</li></ul><h4 id="342-sleep与yield"><a class="anchor" href="#342-sleep与yield">#</a> 3.4.2 sleep 与 yield</h4><p><strong>Sleep</strong></p><ol><li>调用 sleep 会让当前线程从 Running 进入 Timed Waiting 状态（阻塞，有时限的等待）</li><li>其它线程可以使用 interrupt 方法打断正在睡眠的线程，这时 sleep 方法会抛出 InterruptedException</li><li>睡眠结束后的线程未必会立刻得到执行</li><li>建议用 TimeUnit 的 sleep 代替 Thread 的 sleep 来获得更好的可读性 (sleep 底层也是使用的 TimeUnir 的。可读性要好点)</li></ol><p><strong>yield</strong></p><ol><li>调用 yield 会让当前线程从 Running 进入 Runnable 就绪状态，然后调度执行其它线程</li><li>具体的实现依赖于操作系统的任务调度器</li><li>当你让出时间片时，可能会没有线程来使用，这样就会出现让不出去的情况。还会执行自己的</li></ol><p><mark>sleep 与 yield 的区别：sleep 是会让线程进入阻塞态，阻塞态的线程是不会获得时间片的。而 yield 会让线程进入就绪态，还会有可能被分配时间片执行。</mark></p><p><strong>线程优先级</strong></p><ul><li>线程优先级会提示（hint）调度器优先调度该线程，但它仅仅是一个提示，调度器可以忽略它</li><li>如果 cpu 比较忙，那么优先级高的线程会获得更多的时间片，但 cpu 闲时，优先级几乎没作用</li><li>最小优先级 1 最大优先级 10 默认优先级为 5；</li></ul><h4 id="344-join"><a class="anchor" href="#344-join">#</a> 3.4.4 join</h4><p>等待线程结束，等待那个线程结束，就用那个线程实例去调用 join 方法。<br>在等待线程结束时，可在 join 里加入参数，可设置最大等待时间。</p><p>同步：需要等待返回结果后才能继续运行的就是同步，</p><p>异步：不需要等待结果返回，就能继续运行就是异步，</p><h4 id="345-interrupt方法"><a class="anchor" href="#345-interrupt方法">#</a> 3.4.5 interrupt 方法</h4><p>打断正在睡眠的方法，例如 sleep（睡眠）、wait、join（等待结果）的线程，被打断的线程会抛出异常<br>如果线程是正在执行的情况下，这个线程并不会收到影响，只是会被标记为被打断过。</p><h4 id="346-isinterrupted-方法"><a class="anchor" href="#346-isinterrupted-方法">#</a> 3.4.6 isInterrupted () 方法</h4><p>获取打断标记。<br>如果线程被打断过，调用该方法返回 true 否则返回 false<br>注：如果线程状态是 sleep wait join 状态的线程被打断后，会被标记为 false 因为会抛出异常。</p><pre><code>public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        Runnable re=new Runnable() &#123;
+            @Override
+            public void run() &#123;
+                while (true)&#123;
+                    boolean is=Thread.currentThread().isInterrupted();
+                    if(is)&#123;
+                        log.debug(&quot;被打断了&quot;);
+                        break;
+                    &#125;
+                &#125;
+            &#125;
+        &#125;;
+        Thread thread=new Thread(re,&quot;t1&quot;);
+        thread.start();
+       Thread.sleep(1000);
+       log.debug(&quot;interrupt&quot;);
+       thread.interrupt();
+    &#125;
+</code></pre><h4 id="设计模式-两阶段终止"><a class="anchor" href="#设计模式-两阶段终止">#</a> 设计模式 - 两阶段终止</h4><p>在一个线程 t1 中，如果优雅的终止 t2 线程，这里的优雅是指给 t2 一个处理善后工作的机会。<br>错误思路 1</p><ol><li><p>使用线程对象提供的 stop () 方法停止线程，<br>stop 方法会真正的杀死线程，如果这时线程锁住了共享资源，那么当他被杀死后就再也没机会释放锁，其他线程将永远无法获取锁.</p></li><li><p>使用 system.exit 方法停止线程：目的是停止一个线程，但这种做法会让整个程序都停止</p></li></ol><p><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308001114190.png" alt="image-20230308001114190"></p><pre><code>@Slf4j(topic = &quot;c.Test1&quot;)
+public class Test &#123;
+    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;
+        TwoPhaseTermination twoPhaseTermination=new TwoPhaseTermination();
+        twoPhaseTermination.start();
+        Thread.sleep(5000);
+        twoPhaseTermination.stop();
+
+    &#125;
+    static class TwoPhaseTermination&#123;
+        private Thread monitor;
+
+        public void start()&#123;
+            monitor=new Thread(()-&gt;&#123;
+                while (true)&#123;
+                    Thread  cur=Thread.currentThread();
+                    if(cur.isInterrupted())&#123;
+                        log.debug(&quot;处理后事&quot;);
+                        break;
+                    &#125;
+
+                    try &#123;
+                        Thread.sleep(1300);
+                        log.debug(&quot;执行监控记录&quot;);
+                    &#125; catch (InterruptedException e) &#123;
+                        e.printStackTrace();
+                        //重新设置打断标记
+                        cur.interrupt();
+                    &#125;
+                &#125;
+            &#125;);
+            monitor.start();
+        &#125;
+        public void stop()&#123;
+            monitor.interrupt();
+        &#125;
+    &#125;
+&#125;
+</code></pre><h4 id="守护线程与主线程"><a class="anchor" href="#守护线程与主线程">#</a> 守护线程与主线程</h4><p>默认情况下，Java 进程要等待所有线程结束才会结束，但是有一种特殊的线程叫守护线程，只需要其他非守护线程运行结束了，即使守护线程的代码没有执行完，也会强制结束。<br>可以使用 .setDaemon (true); 方法设置为守护线程</p><p>注：垃圾收回器线程就是一种守护线程<br>tomcat 中的 accept 和 poller 线程都是守护线程，所以 tomcat 接收到 shutdown 命令后，不会等待他们处理完当前请求。</p><h4 id="1-线程五种状态"><a class="anchor" href="#1-线程五种状态">#</a> 1、 线程五种状态</h4><p>操作系统层面</p><ol><li><p>初始状态：仅仅在语言层面创建了线程对象</p></li><li><p>就绪状态：该线程已经被创建，可以由 cpu 调度运行</p></li><li><p>运行状态：指获取了 cpu 时间片运行中的状态</p></li><li><p>阻塞状态：调用了阻塞 api, 这时线程不会用到 cpu 会导致线程上下文切换，进入阻塞状态，等待操作执行完，会由操作系统唤醒阻塞的线程，转换为可执行也就是就绪状态，</p></li><li><p>终止状态：线程已经执行完毕，生命周期已经结束，不会再转换状态。</p></li></ol><h4 id="2-线程的六种状态"><a class="anchor" href="#2-线程的六种状态">#</a> 2、线程的六种状态</h4><p>Java 层面</p><ol><li>new 线程刚刚被创建，但是还没有调用 start 方法</li><li>RUNNABLE 当调用了 start 方法后，注意 javaapi 层面的 runnable 状态涵盖了操作系统层面的可运行状态，运行状态，阻塞状态， 由于 bios 导致的线程阻塞 在 Java 里无法区分，仍然认为是可运行的。</li></ol><h3 id="4共享模型"><a class="anchor" href="#4共享模型">#</a> 4. 共享模型</h3><p>多线程访问带来的问题<br>多线程下，读写共享资源，由于分时系统，线程间上下文切换时（指令的交错）会导致线程不安全。<br>例如 I++<br>Java 中对于静态变量的自增、自减，并不是原子性操作。需要分成三条指令去完成，<br>取值，自增，写值，</p><h4 id="41-临界区与竟态条件"><a class="anchor" href="#41-临界区与竟态条件">#</a> 4.1 临界区与竟态条件</h4><ul><li>一个程序运行多个线程本身是没有问题的，</li><li>问题出现在多个线程访问共享资源</li><li>多个线程对共享资源进行读操作也是没有问题的</li><li>问题在于多个线程对共享资源进行读写操作时，发生指令交错，就会出现问题</li><li>一段代码如果存在对共享资源的多线程读写操作，称这段代码为临界区</li></ul><h5 id="竞态条件"><a class="anchor" href="#竞态条件">#</a> 竞态条件</h5><p>多个线程在临界区内执行，由于代码的执行序列不同而导致结果无法预测，称之为发生了竟态条件。</p><h4 id="解决方案"><a class="anchor" href="#解决方案">#</a> 解决方案</h4><p>为了避免临界区的竟态条件发生，有多种手段可以达到目的，<br>阻塞式解决方案： synchronized ，Lock<br>非阻塞式解决方案：原子变量</p><h5 id="synchronized"><a class="anchor" href="#synchronized">#</a> synchronized</h5><p>俗称对象锁，采用互斥的方式让同一时刻最多只有一个线程能持有对象锁，其他线程再想获取这个对象锁时就会阻塞，这样就能保证拥有锁的线程可以安全的执行临界区内的代码，不用担心线程上下文切换。</p><p>注：虽然 Java 中互斥和同步都可以采用 synchronized 关键字来完成，但是他们还是有区别的，</p><ul><li>互斥是保证临界区的竟态条件发生，同一时刻只能有一个线程执行临界区代码。</li><li>同步是由于线程执行的先后、顺序不同，需要一个线程等待其他线程运行到某个点。</li></ul><pre><code>package com.zx.itcast.test;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+@Slf4j(topic = &quot;c.Test1&quot;)
+public class Test &#123;
+    static int res=0;
+    static Object lock=new Object();
+    public static void main(String[] args) throws InterruptedException &#123;
+
+        Thread thread=new Thread(()-&gt;&#123;
+            for(int i=0;i&lt;5000;i++)&#123;
+                synchronized (lock)&#123;
+                    res++;
+                &#125;
+            &#125;
+        &#125;,&quot;t1&quot;);
+        Thread thread2=new Thread(()-&gt;&#123;
+            for(int i=0;i&lt;5000;i++)&#123;
+                synchronized (lock)&#123;
+                    res--;
+                &#125;
+            &#125;
+        &#125;,&quot;t2&quot;);
+        thread.start();
+        thread2.start();
+        thread.join();
+        thread2.join();
+        System.out.println(res);
+    &#125;
+&#125;
+</code></pre><p>synchronizd 实际上是使用了对象锁保证了临界区代码的原子性，临界区内的代码对外是不可分割的，不会被线程切换所打断</p><h5 id="synchronized写在方法上"><a class="anchor" href="#synchronized写在方法上">#</a> synchronized 写在方法上</h5><p>synchronized 加在成员方法上，是锁住了 this 对象<br>synchronized 在在了静态方法上，是锁住了这个类对象</p><h4 id="线程安全分析"><a class="anchor" href="#线程安全分析">#</a> 线程安全分析</h4><h5 id="成员变量和静态变量"><a class="anchor" href="#成员变量和静态变量">#</a> 成员变量和静态变量</h5><ul><li>如果他们没有共享，则线程安全，</li><li>如果他们被共享了，根据他们的状态是否能够改变又分为两种情况</li></ul><ol><li>如果只有读情况，则线程安全，</li><li>如果有写操作，则这段代码是临界区，需要考虑线程安全</li></ol><h5 id="局部变量"><a class="anchor" href="#局部变量">#</a> 局部变量</h5><p>局部变量是线程安全的，但局部变量引用的对象未必</p><ol><li>如果该对象没有逃离方法的作用访问，则他是线程安全的</li><li>如果该对象逃离方法的作用范围，需要考虑线程安全</li></ol><h5 id="常用的线程安全类"><a class="anchor" href="#常用的线程安全类">#</a> 常用的线程安全类</h5><ul><li>String</li><li>Integer</li><li>StringBuffer</li><li>Random</li><li>Vector</li><li>Hashtable 注: HashMap 不是线程安全的；</li><li>java.util.concurrent 下的类<br>这里说他们是线程安全的是指 多个线程调用他们同一个实例的某个方法时，是线程安全的，也可以理解为。他们的每个方法是原子的，但是请注意，他们多个方法的组合不是原子的</li><li>一般局部变量是线程安全的（如果不暴露出修改方法），而成员变量，可能是不安全的</li><li>私有的成员变量，是线程安全的。</li></ul><h3 id="synchronized优化原理"><a class="anchor" href="#synchronized优化原理">#</a> synchronized 优化原理</h3><h5 id="monitor"><a class="anchor" href="#monitor">#</a> Monitor</h5><p>对象由两部分组成，一部分是对象头， 另一部分就是对象中的一些成员变量。<br>每个 Java 对象都可以关联一个 Monitor 对象，如果使用 synchronized 给对象上锁之后，该对象的 MarkWord 中就被设置指向 Monitor 对象的指针。</p><h5 id="轻量级锁"><a class="anchor" href="#轻量级锁">#</a> 轻量级锁</h5><p>应用场景： 如果一个对象虽然有多个线程访问，但多线程访问的时间是错开的（也就是没有竞争）那么可以使用轻量级锁来优化。</p><p>轻量级锁对使用者来说是透明的，</p><h5 id="偏向锁"><a class="anchor" href="#偏向锁">#</a> 偏向锁</h5><h3 id="wait-ify-原理"><a class="anchor" href="#wait-ify-原理">#</a> wait ify 原理</h3><h4 id="原理"><a class="anchor" href="#原理">#</a> 原理</h4><p><img data-src="https://blog-1259743669.cos.ap-chengdu.myqcloud.com/image-20230308001138286.png" alt="image-20230308001138286"></p><ul><li>Owner 会在线程条件不满足时，调用 wait 方法 即可进入 WaitSet 变为 WAITING 状态</li><li>BLOCKED 和 WAITING 的线程都处于阻塞状态，不占用时间片</li><li>BLOCKED 的线程会在 Owner 线程释放锁时被唤醒</li><li>WAITING 线程调用 notify 或 notifyAll 时唤醒，但是唤醒后不意味着立刻即可获得锁，仍需要进入 EntryList 竞争</li></ul><h4 id="对象锁api"><a class="anchor" href="#对象锁api">#</a> 对象锁 API</h4><p>obj.wait () 让进入 object 监视器的线程到 waitSet 等待<br>obj.notify () 让在 object 上正在 waitSet 等待的线程中挑一个唤醒<br>obj.notifyAll () 让 object 上正在 waitSet 等待的线程全部唤醒<br>obj.wait (long timeout) 让进入 object 监视器的线程到 waitSet 等待一段时间，时间到了自动唤醒</p><p>他们都是线程之间进行协作的手段，<strong>都属于 Object 对象的方法，必须获得此对象的锁</strong>，才能调用这几个方法</p><h4 id="sleep和waitlong-n的区域"><a class="anchor" href="#sleep和waitlong-n的区域">#</a> sleep 和 wait (long n) 的区域</h4><ul><li>sleep 是 Thread 方法，wait 是 Object 的方法</li><li>sleep 不需要强制和 synchronized 配合使用，但 wait 需要和 synchronized 一起用</li><li>sleep 在睡眠同时，不会释放对象锁，但 wait 在等待的时候会释放对象锁</li></ul><h4 id="同步模式之保护性暂停"><a class="anchor" href="#同步模式之保护性暂停">#</a> 同步模式之保护性暂停</h4><p>主要是用在一个线程等待另一个线程的执行结果时</p><ul><li>有一个结果需要从一个线程传送到另一个线程，让他们关联同一个 GuardedObject</li><li>如果有结果源源不断的从一个线程传递到另一个线程，那么可以使用消息队列</li><li>JDK 中 join 的实现 Futrue 的实现，采用的就是这个模式</li><li>因为要等待另一方的结果，所以归类到同步模式</li></ul><pre><code>package com.zx.itcast.test;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j(topic = &quot;test2&quot;)
+public class Test2 &#123;
+
+    private Object response;
+    public Object get()&#123;
+        synchronized (this)&#123;
+            while(response==null)&#123;
+                try &#123;
+                    //让他等待
+                    this.wait();
+                &#125; catch (InterruptedException e) &#123;
+                    e.printStackTrace();
+                &#125;
+            &#125;
+            return response;
+        &#125;
+    &#125;
+    //产生结果
+    public void complete(Object response)&#123;
+        synchronized (this)&#123;
+            this.response=response;
+            this.notify();
+        &#125;
+    &#125;
+&#125;
+</code></pre><p>也可以增强超时的处理</p><pre><code>package com.zx.itcast.n3;
+
+/**
+ * 带超时的暂停
+ */
+public class GuardedObject &#123;
+    //结果
+    private  Object resonse;
+    //锁对象
+    private final  Object lock=new Object();
+    //获取结果的方法
+    public Object get(long millis) &#123;
+        synchronized (lock)&#123;
+            //开始等待时间
+            long begin=System.currentTimeMillis();
+            //已经经历的时间
+            long timePassed=0;
+            while(resonse==null)&#123;
+                long waitTime=millis-timePassed;
+                if(waitTime&lt;0)&#123;
+                    break;
+                &#125;
+                try &#123;
+                    lock.wait(waitTime);
+                &#125;catch (InterruptedException e)&#123;
+                    e.printStackTrace();
+                &#125;
+
+                timePassed=System.currentTimeMillis()-begin;
+            &#125;
+            return resonse;
+        &#125;
+    &#125;
+    public void compltet(Object resonse)&#123;
+        synchronized (lock)&#123;
+            this.resonse=resonse;
+            lock.notifyAll();
+        &#125;
+    &#125;
+&#125;
+</code></pre><h4 id="异步模式-生产者消费者模式"><a class="anchor" href="#异步模式-生产者消费者模式">#</a> 异步模式 --- 生产者消费者模式</h4><ul><li>与前面的保护性暂停中国的 Guardobject 不同，不需要产生结果和消费结果的线程一一对应，</li><li>消费队列可以用来平衡生产和消费的线程资源</li><li>生产者仅负责产生结果数据，不关心数据如何处理，而消费者专注于数据处理，</li><li>消息队列有容量机制，满时不会再加入数据，空时不会再消耗数据</li><li>jdk 中各种阻塞队列 就是使用的这种模式</li></ul><div class="tags"><a href="/tags/JUC/" rel="tag"><i class="ic i-tag"></i> JUC</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"><i class="ic i-tag"></i> 多线程</a></div></div><footer><div class="meta"><span class="item"><span class="icon"><i class="ic i-calendar-check"></i> </span><span class="text">更新于</span> <time title="修改时间：2023-03-08 00:47:04" itemprop="dateModified" datetime="2023-03-08T00:47:04+08:00">2023-03-08</time> </span><span id="/JUC学习笔记" class="item leancloud_visitors" data-flag-title="JUC学习笔记" title="阅读次数"><span class="icon"><i class="ic i-eye"></i> </span><span class="text">阅读次数</span> <span class="leancloud-visitors-count"></span> <span class="text">次</span></span></div><div class="reward"><button><i class="ic i-heartbeat"></i> 赞赏</button><p>请我喝[茶]~(￣▽￣)~*</p><div id="qr"><div><img data-src="/images/wechatpay.png" alt="摘星 微信支付"><p>微信支付</p></div><div><img data-src="/images/alipay.png" alt="摘星 支付宝"><p>支付宝</p></div><div><img data-src="/images/paypal.png" alt="摘星 贝宝"><p>贝宝</p></div></div></div><div id="copyright"><ul><li class="author"><strong>本文作者： </strong>摘星 <i class="ic i-at"><em>@</em></i>星辰驿站</li><li class="link"><strong>本文链接：</strong> <a href="http://dj_zhaixing.gitee.io/JUC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="JUC学习笔记">http://dj_zhaixing.gitee.io/JUC学习笔记</a></li><li class="license"><strong>版权声明： </strong>本站所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="ic i-creative-commons"><em>(CC)</em></i>BY-NC-SA</span> 许可协议。转载请注明出处！</li></ul></div></footer></article></div><div class="post-nav"><div class="item left"><a href="/Java%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" itemprop="url" rel="prev" data-background-image="https:&#x2F;&#x2F;blog-1259743669.cos.ap-chengdu.myqcloud.com&#x2F;5af17f7f881b11ebb6edd017c2d2eca2.jpg" title="Java常用容器学习笔记"><span class="type">上一篇</span> <span class="category"><i class="ic i-flag"></i> 数据结构与算法</span><h3>Java常用容器学习笔记</h3></a></div><div class="item right"><a href="/Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4" itemprop="url" rel="next" data-background-image="https:&#x2F;&#x2F;blog-1259743669.cos.ap-chengdu.myqcloud.com&#x2F;5af17f7f881b11ebb6edd017c2d2eca2.jpg" title="Python自动化运维"><span class="type">下一篇</span> <span class="category"><i class="ic i-flag"></i> Python</span><h3>Python自动化运维</h3></a></div></div><div class="wrap" id="comments"></div></div><div id="sidebar"><div class="inner"><div class="panels"><div class="inner"><div class="contents panel pjax" data-title="文章目录"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">1.1 进程与线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">2.2 并行与并发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#31java%E5%88%9B%E5%BB%BA%E5%92%8C%E8%BF%90%E8%A1%8C%E7%BA%BF%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">3.1Java 创建和运行线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32%E6%A0%88%E4%B8%8E%E6%A0%88%E5%B8%A7"><span class="toc-number">4.</span> <span class="toc-text">3.2 栈与栈帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#33%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="toc-number">5.</span> <span class="toc-text">3.3 上下文切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#34%E5%B8%B8%E7%94%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">3.4 常用的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#341-start%E4%B8%8Erun"><span class="toc-number">6.1.</span> <span class="toc-text">3.4.1 start 与 run</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#342-sleep%E4%B8%8Eyield"><span class="toc-number">6.2.</span> <span class="toc-text">3.4.2 sleep 与 yield</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#344-join"><span class="toc-number">6.3.</span> <span class="toc-text">3.4.4 join</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#345-interrupt%E6%96%B9%E6%B3%95"><span class="toc-number">6.4.</span> <span class="toc-text">3.4.5 interrupt 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#346-isinterrupted-%E6%96%B9%E6%B3%95"><span class="toc-number">6.5.</span> <span class="toc-text">3.4.6 isInterrupted () 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E4%B8%A4%E9%98%B6%E6%AE%B5%E7%BB%88%E6%AD%A2"><span class="toc-number">6.6.</span> <span class="toc-text">设计模式 - 两阶段终止</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B%E4%B8%8E%E4%B8%BB%E7%BA%BF%E7%A8%8B"><span class="toc-number">6.7.</span> <span class="toc-text">守护线程与主线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BA%BF%E7%A8%8B%E4%BA%94%E7%A7%8D%E7%8A%B6%E6%80%81"><span class="toc-number">6.8.</span> <span class="toc-text">1、 线程五种状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%85%AD%E7%A7%8D%E7%8A%B6%E6%80%81"><span class="toc-number">6.9.</span> <span class="toc-text">2、线程的六种状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.</span> <span class="toc-text">4. 共享模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#41-%E4%B8%B4%E7%95%8C%E5%8C%BA%E4%B8%8E%E7%AB%9F%E6%80%81%E6%9D%A1%E4%BB%B6"><span class="toc-number">7.1.</span> <span class="toc-text">4.1 临界区与竟态条件</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6"><span class="toc-number">7.1.1.</span> <span class="toc-text">竞态条件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">7.2.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#synchronized"><span class="toc-number">7.2.1.</span> <span class="toc-text">synchronized</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#synchronized%E5%86%99%E5%9C%A8%E6%96%B9%E6%B3%95%E4%B8%8A"><span class="toc-number">7.2.2.</span> <span class="toc-text">synchronized 写在方法上</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90"><span class="toc-number">7.3.</span> <span class="toc-text">线程安全分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%92%8C%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F"><span class="toc-number">7.3.1.</span> <span class="toc-text">成员变量和静态变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-number">7.3.2.</span> <span class="toc-text">局部变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%B1%BB"><span class="toc-number">7.3.3.</span> <span class="toc-text">常用的线程安全类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86"><span class="toc-number">8.</span> <span class="toc-text">synchronized 优化原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#monitor"><span class="toc-number">8.0.1.</span> <span class="toc-text">Monitor</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81"><span class="toc-number">8.0.2.</span> <span class="toc-text">轻量级锁</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%81%8F%E5%90%91%E9%94%81"><span class="toc-number">8.0.3.</span> <span class="toc-text">偏向锁</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#wait-ify-%E5%8E%9F%E7%90%86"><span class="toc-number">9.</span> <span class="toc-text">wait ify 原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">9.1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E9%94%81api"><span class="toc-number">9.2.</span> <span class="toc-text">对象锁 API</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sleep%E5%92%8Cwaitlong-n%E7%9A%84%E5%8C%BA%E5%9F%9F"><span class="toc-number">9.3.</span> <span class="toc-text">sleep 和 wait (long n) 的区域</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BF%9D%E6%8A%A4%E6%80%A7%E6%9A%82%E5%81%9C"><span class="toc-number">9.4.</span> <span class="toc-text">同步模式之保护性暂停</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%BC%8F-%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="toc-number">9.5.</span> <span class="toc-text">异步模式 --- 生产者消费者模式</span></a></li></ol></li></div><div class="related panel pjax" data-title="系列文章"><ul><li class="active"><a href="/JUC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" rel="bookmark" title="JUC学习笔记">JUC学习笔记</a></li></ul></div><div class="overview panel" data-title="站点概览"><div class="author" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="image" itemprop="image" alt="摘星" data-src="/images/avatar.jpg"><p class="name" itemprop="name">摘星</p><div class="description" itemprop="description">欢迎来到摘星的小破站，这里你可以阅读我的学习笔记并提出独到的见解~我们将互相学习交流知识，共同进步</div></div><nav class="state"><div class="item posts"><a href="/archives/"><span class="count">11</span> <span class="name">文章</span></a></div><div class="item categories"><a href="/categories/"><span class="count">14</span> <span class="name">分类</span></a></div><div class="item tags"><a href="/tags/"><span class="count">22</span> <span class="name">标签</span></a></div></nav><div class="social"></div><ul class="menu"><li class="item"><a href="/" rel="section"><i class="ic i-hemo"></i>主站</a></li><li class="item"><a href="/about/" rel="section"><i class="ic i-about"></i>关于我</a></li><li class="item"><a href="/categories/" rel="section"><i class="ic i-th"></i>分类</a></li><li class="item"><a href="/tags/" rel="section"><i class="ic i-tags"></i>标签</a></li><li class="item dropdown"><a href="javascript:void(0);"><i class="ic i-feather"></i>文章</a><ul class="submenu"><li class="item"><a href="/archives/" rel="section"><i class="ic i-list-alt"></i>归档</a></li></ul></li><li class="item dropdown"><a href="javascript:void(0);"><i class="ic i-feather"></i>链接</a><ul class="submenu"><li class="item"><a href="/friends/" rel="section"><i class="ic i-heart"></i>友链</a></li><li class="item"><a href="/links/" rel="section"><i class="ic i-magic"></i>项目链接</a></li></ul></li><li class="item"><a href="/guestbook/" rel="section"><i class="ic i-guestbook"></i>留言板</a></li></ul></div></div></div><ul id="quick"><li class="prev pjax"><a href="/Java%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" rel="prev" title="上一篇"><i class="ic i-chevron-left"></i></a></li><li class="up"><i class="ic i-arrow-up"></i></li><li class="down"><i class="ic i-arrow-down"></i></li><li class="next pjax"><a href="/Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4" rel="next" title="下一篇"><i class="ic i-chevron-right"></i></a></li><li class="percent"></li></ul></div></div><div class="dimmer"></div></div></main><footer id="footer"><div class="inner"><div class="widgets"><div class="rpost pjax"><h2>随机文章</h2><ul><li class="item"><div class="breadcrumb"><a href="/categories/MySQL/" title="分类于 MySQL">MySQL</a></div><span><a href="/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="MySQL学习笔记">MySQL学习笔记</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/%E5%89%91%E6%8C%87offer/" title="分类于 剑指offer">剑指offer</a> <i class="ic i-angle-right"></i> <a href="/categories/%E5%89%91%E6%8C%87offer/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" title="分类于 数据结构与算法">数据结构与算法</a></div><span><a href="/%E6%9C%80%E5%B0%8F%E6%A0%88" title="最小栈">最小栈</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95%E5%AD%A6%E4%B9%A0/" title="分类于 代码随想录学习">代码随想录学习</a> <i class="ic i-angle-right"></i> <a href="/categories/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" title="分类于 数据结构与算法">数据结构与算法</a></div><span><a href="/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE" title="二分查找">二分查找</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" title="分类于 计算机基础">计算机基础</a></div><span><a href="/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8" title="IO模式">IO模式</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/Redis/" title="分类于 Redis">Redis</a></div><span><a href="/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="Redis学习笔记">Redis学习笔记</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/java/" title="分类于 java">java</a> <i class="ic i-angle-right"></i> <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" title="分类于 数据结构与算法">数据结构与算法</a></div><span><a href="/Java%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="Java常用容器学习笔记">Java常用容器学习笔记</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" title="分类于 大数据">大数据</a></div><span><a href="/Hadoop%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0" title="Hadoop集群搭建笔记">Hadoop集群搭建笔记</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/Python/" title="分类于 Python">Python</a></div><span><a href="/Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4" title="Python自动化运维">Python自动化运维</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/java/" title="分类于 java">java</a> <i class="ic i-angle-right"></i> <a href="/categories/%E5%BC%82%E6%AD%A5%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="分类于 异步设计模式">异步设计模式</a></div><span><a href="/JUC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="JUC学习笔记">JUC学习笔记</a></span></li><li class="item"><div class="breadcrumb"><a href="/categories/java/" title="分类于 java">java</a></div><span><a href="/%E5%9F%BA%E4%BA%8ESpringBoot%E6%95%B4%E5%90%88SpringSecurity%E7%9A%84%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83" title="基于SpringBoot整合SpringSecurity的认证授权">基于SpringBoot整合SpringSecurity的认证授权</a></span></li></ul></div><div><h2>最新评论</h2><ul class="leancloud-recent-comment"></ul></div></div><div class="status"><div class="copyright">&copy; 2010 – <span itemprop="copyrightYear">2024</span> <span class="with-love"><i class="ic i-sakura rotate"></i> </span><span class="author" itemprop="copyrightHolder">摘星 @ Pick stars</span></div><div class="count"><span class="post-meta-item-icon"><i class="ic i-chart-area"></i> </span><span title="站点总字数">67k 字</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="ic i-coffee"></i> </span><span title="站点阅读时长">1:01</span></div></div></div></footer></div><script data-config type="text/javascript">var LOCAL={path:"/JUC学习笔记",favicon:{show:"（●´3｀●）やれやれだぜ",hide:"(´Д｀)大変だ！"},search:{placeholder:"文章搜索",empty:"关于 「 ${query} 」，什么也没搜到",stats:"${time} ms 内找到 ${hits} 条结果"},valine:!0,fancybox:!0,copyright:'复制成功，转载请遵守 <i class="ic i-creative-commons"></i>BY-NC-SA 协议。',ignores:[function(e){return e.includes("#")},function(e){return new RegExp(LOCAL.path+"$").test(e)}]}</script><script src="https://cdn.polyfill.io/v2/polyfill.js"></script><script src="//cdn.jsdelivr.net/combine/npm/pace-js@1.0.2/pace.min.js,npm/pjax@0.2.8/pjax.min.js,npm/whatwg-fetch@3.4.0/dist/fetch.umd.min.js,npm/animejs@3.2.0/lib/anime.min.js,npm/algoliasearch@4/dist/algoliasearch-lite.umd.js,npm/instantsearch.js@4/dist/instantsearch.production.min.js,npm/lozad@1/dist/lozad.min.js,npm/quicklink@2/dist/quicklink.umd.js"></script><script src="/js/app.js?v=0.2.5"></script></body></html>
